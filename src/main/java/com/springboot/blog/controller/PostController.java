@@ -1,5 +1,6 @@
 package com.springboot.blog.controller;
 
+import com.springboot.blog.constants.Constants;
 import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping(Constants.URL_PATH)
 public class PostController {
 
     private final PostService postService;
+
 
     @Autowired
     public PostController(PostService postService) {
@@ -26,24 +28,27 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        return new ResponseEntity<>(postService.getAllPosts(), HttpStatus.OK);
+    public ResponseEntity<List<PostDto>> getAllPosts(
+            @RequestParam(value = Constants.PAGE_NO, defaultValue = Constants.ZERO,required = false) Integer pageNo,
+            @RequestParam(value = Constants.PAGE_SIZE,defaultValue = Constants.TEN,required = false)Integer pageSize
+    ) {
+        return new ResponseEntity<>(postService.getAllPosts(pageNo,pageSize), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(Constants.URL_RESOURCE_IDENTIFIER)
     public ResponseEntity<PostDto> getPost(@PathVariable Long id) {
         return new ResponseEntity<>(postService.getPostById(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(Constants.URL_RESOURCE_IDENTIFIER)
     public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto,@PathVariable Long id){
         return new ResponseEntity<>(postService.updatePost(postDto,id),HttpStatus.OK);
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(Constants.URL_RESOURCE_IDENTIFIER)
     public ResponseEntity<String> deletePost(@PathVariable Long id){
         postService.deletePost(id);
-        return new ResponseEntity<>("Post Entity deleted successfully",HttpStatus.OK);
+        return new ResponseEntity<>(Constants.DELETE_MESSAGE,HttpStatus.OK);
     }
 }
