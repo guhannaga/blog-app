@@ -29,10 +29,12 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostDto>> getAllPosts(
-            @RequestParam(value = Constants.PAGE_NO, defaultValue = Constants.ZERO,required = false) Integer pageNo,
-            @RequestParam(value = Constants.PAGE_SIZE,defaultValue = Constants.TEN,required = false)Integer pageSize
+            @RequestParam(value = Constants.PAGE_NO, defaultValue = Constants.DEFAULT_PAGE_NO,required = false) Integer pageNo,
+            @RequestParam(value = Constants.PAGE_SIZE,defaultValue = Constants.DEFAULT_PAGE_SIZE,required = false)Integer pageSize,
+            @RequestParam(value = Constants.SORT_BY,defaultValue = Constants.DEFAULT_POST_SORT_BY,required = false)String sortBy,
+            @RequestParam(value=Constants.SORT_DIRECTION,defaultValue = Constants.DEFAULT_SORT_DIRECTION,required = false)String sortDir
     ) {
-        return new ResponseEntity<>(postService.getAllPosts(pageNo,pageSize), HttpStatus.OK);
+        return new ResponseEntity<>(postService.getAllPosts(pageNo,pageSize,sortBy,sortDir), HttpStatus.OK);
     }
 
     @GetMapping(Constants.URL_RESOURCE_IDENTIFIER)

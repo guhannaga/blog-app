@@ -1,5 +1,6 @@
 package com.springboot.blog.service;
 
+import com.springboot.blog.constants.Constants;
 import com.springboot.blog.entity.Post;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.payload.PostDto;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -32,67 +34,66 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDto createPost(PostDto postDto) {
-
         Post post = mapToPost(postDto);
         Post newPost = postRepository.save(post);
-        PostDto postResponse = mapToPostDto(newPost);
-        return postResponse;
+        return mapToPostDto(newPost);
     }
 
 
     private PostDto mapToPostDto(Post post) {
-        PostDto postDto = PostDto.builder()
-                .id(post.getId())
+        return PostDto.builder()
+                .id(post.getPostId())
                 .title(post.getTitle())
                 .description(post.getDescription())
                 .content(post.getContent())
                 .build();
-        return postDto;
     }
 
     private Post mapToPost(PostDto postDto) {
-        Post post = Post.builder()
-                .id(postDto.getId())
+
+        return Post.builder()
+                .postId(postDto.getId())
                 .title(postDto.getTitle())
                 .description(postDto.getDescription())
                 .content(postDto.getContent())
                 .build();
-        return post;
     }
 
+
     @Override
-    public List<PostDto> getAllPosts(Integer pageNo, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Post> posts = postRepository.findAll(pageable);
-        List<Post> postsList = posts.getContent();
-        List<PostDto> PostDtoList = postsList.stream().map(post -> mapToPostDto(post)).collect(Collectors.toList());
-        return PostDtoList;
+    public List<PostDto> getAllPosts(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Post> postPage = postRepository.findAll(pageable);
+        List<Post> postList = postPage.getContent();
+        return postList.stream().map(post -> mapToPostDto(post)).collect(Collectors.toList());
     }
 
     @Override
     public PostDto getPostById(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
-        PostDto postDto = mapToPostDto(post);
-        return postDto;
+        Post post = getPostFromRepository(id);
+        return mapToPostDto(post);
     }
 
     @Override
     public PostDto updatePost(PostDto postDto, Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
-
+        Post post = getPostFromRepository(id);
         post.setTitle(postDto.getTitle());
         post.setDescription(postDto.getDescription());
         post.setContent(postDto.getContent());
-
         Post updatedPost = postRepository.save(post);
-
         return mapToPostDto(updatedPost);
     }
 
     @Override
     public void deletePost(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        Post post = getPostFromRepository(id);
         postRepository.delete(post);
+    }
+
+    private Post getPostFromRepository(Long id) {
+        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Constants.POST, Constants.ID, id));
     }
 
 }
