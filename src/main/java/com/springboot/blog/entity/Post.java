@@ -22,7 +22,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long id;
     @Column(name = Constants.POST_TITLE, nullable = false)
     private String title;
     @Column(name = Constants.POST_DESCRIPTION, nullable = false)

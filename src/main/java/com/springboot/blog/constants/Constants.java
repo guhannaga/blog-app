@@ -16,7 +16,7 @@ public class Constants {
     public static final String POST_DESCRIPTION = "post_description";
     public static final String POST_CONTENT = "post_content";
     public static final String POST = "Post";
-    public static final String ID = "id";
+    public static final String POST_ID = "postId";
     public static final String SORT_BY = "sortBy";
     public static final String DEFAULT_POST_SORT_BY = "postId";
     public static final String SORT_DIRECTION = "sortDir";

@@ -42,7 +42,7 @@ public class PostServiceImpl implements PostService {
 
     private PostDto mapToPostDto(Post post) {
         return PostDto.builder()
-                .id(post.getPostId())
+                .postId(post.getId())
                 .title(post.getTitle())
                 .description(post.getDescription())
                 .content(post.getContent())
@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
     private Post mapToPost(PostDto postDto) {
 
         return Post.builder()
-                .postId(postDto.getId())
+                .id(postDto.getPostId())
                 .title(postDto.getTitle())
                 .description(postDto.getDescription())
                 .content(postDto.getContent())
@@ -87,13 +87,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(Long id) {
-        Post post = getPostFromRepository(id);
+    public void deletePost(Long postId) {
+        Post post = getPostFromRepository(postId);
         postRepository.delete(post);
     }
 
-    private Post getPostFromRepository(Long id) {
-        return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Constants.POST, Constants.ID, id));
+    private Post getPostFromRepository(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(Constants.POST, Constants.POST_ID, postId));
     }
 
 }

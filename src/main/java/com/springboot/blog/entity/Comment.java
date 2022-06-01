@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long id;
     @Column(name = Constants.COMMENT_TITLE, nullable = false)
     private String commentTitle;
     @Column(name=Constants.COMMENT_BODY,nullable = false)
