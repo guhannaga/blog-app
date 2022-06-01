@@ -1,8 +1,10 @@
 package com.springboot.blog.service;
 
 import com.springboot.blog.constants.Constants;
+import com.springboot.blog.entity.Comment;
 import com.springboot.blog.entity.Post;
 import com.springboot.blog.exception.ResourceNotFoundException;
+import com.springboot.blog.payload.CommentDto;
 import com.springboot.blog.payload.PostDto;
 import com.springboot.blog.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +49,7 @@ public class PostServiceImpl implements PostService {
                 .title(post.getTitle())
                 .description(post.getDescription())
                 .content(post.getContent())
+                .comments(post.getComments()==null?new HashSet<>():post.getComments().stream().map(comment -> mapToCommentDto(comment)).collect(Collectors.toSet()))
                 .build();
     }
 
@@ -56,10 +60,25 @@ public class PostServiceImpl implements PostService {
                 .title(postDto.getTitle())
                 .description(postDto.getDescription())
                 .content(postDto.getContent())
+                .comments(postDto.getComments()==null?new HashSet<>():postDto.getComments().stream().map(comment -> mapToComment(comment)).collect(Collectors.toSet()))
                 .build();
     }
-
-
+    private Comment mapToComment(CommentDto commentDto) {
+        return Comment.builder()
+                .id(commentDto.getCommentId())
+                .commentTitle(commentDto.getCommentTitle())
+                .commentBody(commentDto.getCommentBody())
+                .commentAuthor(commentDto.getCommentAuthor())
+                .build();
+    }
+    private CommentDto mapToCommentDto(Comment comment) {
+        return CommentDto.builder()
+                .commentId(comment.getId())
+                .commentTitle(comment.getCommentTitle())
+                .commentBody(comment.getCommentBody())
+                .commentAuthor(comment.getCommentAuthor())
+                .build();
+    }
     @Override
     public List<PostDto> getAllPosts(Integer pageNo, Integer pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()

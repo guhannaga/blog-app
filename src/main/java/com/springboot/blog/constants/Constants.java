@@ -24,7 +24,6 @@ public class Constants {
     public static final String COMMENT_BODY = "comment_body";
     public static final String COMMENT_AUTHOR = "comment_author";
 
-
     private Constants(){
 
     }
